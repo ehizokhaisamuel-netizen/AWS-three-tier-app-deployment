@@ -19,8 +19,9 @@
 - [Challenges & Solutions](#challenges--solutions)
 - [Lessons Learned](#lessons-learned)
 - [Future Improvements](#future-improvements)
+- [Local Development](local-development)
+- [Support & Contact](support--contact)
 - [Security](#security)
-- [Author](#author)
 
 ---
 
@@ -38,7 +39,7 @@ This project demonstrates the **design, deployment, and troubleshooting** of a p
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ### System Design
 
@@ -87,7 +88,7 @@ This project demonstrates the **design, deployment, and troubleshooting** of a p
 
 ---
 
-## 💡 Technology Stack
+## Technology Stack
 
 ### Infrastructure (AWS)
 - **VPC** - Custom virtual network with public & private subnets
@@ -116,7 +117,7 @@ This project demonstrates the **design, deployment, and troubleshooting** of a p
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 ✅ **Production-Grade Architecture**
 - Three-tier separation of concerns
@@ -145,7 +146,7 @@ This project demonstrates the **design, deployment, and troubleshooting** of a p
 
 ---
 
-## 📚 Lessons Learned
+## Lessons Learned
 
 ### AWS & Infrastructure
 - VPC segmentation and subnet design principles
@@ -184,7 +185,7 @@ This project demonstrates the **design, deployment, and troubleshooting** of a p
 
 ---
 
-## 🔮 Future Improvements
+## Future Improvements
 
 - [ ] **Auto Scaling Groups** - Dynamically scale frontend and backend tiers
 - [ ] **Amazon RDS** - Replace EC2 MySQL with managed RDS (multi-AZ)
@@ -199,7 +200,7 @@ This project demonstrates the **design, deployment, and troubleshooting** of a p
 
 ---
 
-## 🛠️ Local Development
+## Local Development
 
 ### Prerequisites
 - Node.js 18+
@@ -230,7 +231,7 @@ mysql -u root -p < database/dump.sql
 
 ---
 
-## 📞 Support & Contact
+## Support & Contact
 
 **Issues & Questions:**
 - Check the [Troubleshooting Guide](documentation/troubleshooting-guide.md)
