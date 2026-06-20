@@ -11,7 +11,7 @@
 
 ## 📋 Table of Contents
 
-- [Project Overview](##project-overview)
+- [Project Overview](#project-overview)
 - [Architecture](#architecture)
 - [Technology Stack](#technology-stack)
 - [Key Features](#key-features)
@@ -24,7 +24,7 @@
 
 ---
 
-## 📖 Project Overview
+## Project Overview
 
 This project demonstrates the **design, deployment, and troubleshooting** of a production-style three-tier web application architecture on AWS. The application is a book review platform where users can browse books, read reviews, and leave their own feedback.
 
