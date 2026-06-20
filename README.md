@@ -19,8 +19,8 @@
 - [Challenges & Solutions](#challenges--solutions)
 - [Lessons Learned](#lessons-learned)
 - [Future Improvements](#future-improvements)
-- [Local Development](local-development)
-- [Support & Contact](support--contact)
+- [Local Development](#local-development)
+- [Support & Contact](#support--contact)
 - [Security](#security)
 
 ---
