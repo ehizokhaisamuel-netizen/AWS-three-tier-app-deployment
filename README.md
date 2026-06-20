@@ -202,20 +202,6 @@ This project demonstrates the **design, deployment, and troubleshooting** of a p
 ## 📁 Repository Structure
 
 ```
-aws-three-tier-book-review-app/
-│
-├── README.md                    # This file
-├── LICENSE                      # MIT License
-│
-├── frontend/                    # Next.js application
-│   ├── package.json
-│   ├── .env.example
-│   ├── public/
-│   ├── pages/                   # Next.js pages
-│   ├── components/              # React components
-│   ├── src/
-│   │   └── api.js              # Axios API client
-│   └── next.config.js
 │
 ├── backend/                     # Node.js/Express API
 │   ├── package.json
@@ -232,11 +218,7 @@ aws-three-tier-book-review-app/
 │   ├── three-tier-diagram.png
 │   ├── vpc-design.png
 │   └── network-flow.md
-│
-└── documentation/              # Additional guides
-    ├── deployment-guide.md
-    ├── troubleshooting-guide.md
-    └── security-checklist.md
+
 ```
 
 ---
@@ -284,12 +266,6 @@ mysql -u root -p < database/dump.sql
 📧 Email: [your-email@example.com]  
 🔗 LinkedIn: [linkedin.com/in/samuel-ehizokhai](https://www.linkedin.com/in/samuel-ehizokhai)  
 💻 GitHub: [@username](https://github.com/username)  
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ---
 
