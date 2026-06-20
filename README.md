@@ -11,11 +11,11 @@
 
 ## 📋 Table of Contents
 
-- [Project Overview](project-overview)
+- [Project Overview](#project-overview)
 - [Architecture](#architecture)
 - [Technology Stack](#technology-stack)
 - [Key Features](#key-features)
-- [Deployment Guide](#deployment-guide)
+- [Deployment Guide](deployment-guide)
 - [Challenges & Solutions](#challenges--solutions)
 - [Lessons Learned](#lessons-learned)
 - [Future Improvements](#future-improvements)
