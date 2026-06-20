@@ -199,30 +199,6 @@ This project demonstrates the **design, deployment, and troubleshooting** of a p
 
 ---
 
-## 📁 Repository Structure
-
-```
-│
-├── backend/                     # Node.js/Express API
-│   ├── package.json
-│   ├── .env.example
-│   ├── server.js               # Entry point
-│   ├── routes/                 # API endpoints
-│   ├── controllers/            # Business logic
-│   ├── models/                 # Database models
-│   ├── middleware/             # Auth, logging, etc
-│   └── database/
-│       └── dump.sql            # Initial schema
-│
-├── architecture/               # Diagrams & documentation
-│   ├── three-tier-diagram.png
-│   ├── vpc-design.png
-│   └── network-flow.md
-
-```
-
----
-
 ## 🛠️ Local Development
 
 ### Prerequisites
@@ -263,9 +239,8 @@ mysql -u root -p < database/dump.sql
 
 **Author:**  
 **Samuel Ehizokhai** | DevOps/Cloud Engineer  
-📧 Email: [your-email@example.com]  
-🔗 LinkedIn: [linkedin.com/in/samuel-ehizokhai](https://www.linkedin.com/in/samuel-ehizokhai)  
-💻 GitHub: [@username](https://github.com/username)  
+📧 Email: ehizokhaisamuel@gmail.com 
+🔗 LinkedIn: [linkedin.com/in/samuel-ehizokhai](https://www.linkedin.com/in/samuel-ehizokhai)
 
 ---
 
