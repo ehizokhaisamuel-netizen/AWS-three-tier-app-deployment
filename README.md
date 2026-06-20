@@ -14,8 +14,8 @@
 - [Project Overview](#project-overview)
 - [Architecture](#architecture)
 - [Technology Stack](#technology-stack)
-- [Key Features](#key-features)
 - [Local Development](#local-development)
+- [Key Features](#key-features)
 - [Deployment Guide](documentation/deployment-guide.md)
 - [Lessons Learned](#lessons-learned)
 - [Future Improvements](#future-improvements)
@@ -82,6 +82,37 @@ This project demonstrates the **design, deployment, and troubleshooting** of a p
 ### Database
 - **MySQL 8.0** - Relational database
 - **Private Subnet Deployment** - No public internet access
+
+---
+
+## Local Development
+
+### Prerequisites
+- Node.js 18+
+- MySQL 8.0+
+- Git
+
+### Setup Frontend
+```bash
+cd frontend
+cp .env.example .env
+npm install
+npm run dev    # Development server on localhost:3000
+```
+
+### Setup Backend
+```bash
+cd backend
+cp .env.example .env
+npm install
+npm run dev    # Development server on localhost:3001
+```
+
+### Setup Database
+```bash
+mysql -u root -p < database/dump.sql
+# Or use MySQL Workbench GUI
+```
 
 ---
 
@@ -165,37 +196,6 @@ This project demonstrates the **design, deployment, and troubleshooting** of a p
 - [ ] **S3 & CloudFront** - Static asset delivery with CDN
 - [ ] **Terraform/CloudFormation** - Infrastructure as Code
 - [ ] **CI/CD Pipeline** - Automated deployment (GitHub Actions / CodePipeline)
-
----
-
-## Local Development
-
-### Prerequisites
-- Node.js 18+
-- MySQL 8.0+
-- Git
-
-### Setup Frontend
-```bash
-cd frontend
-cp .env.example .env
-npm install
-npm run dev    # Development server on localhost:3000
-```
-
-### Setup Backend
-```bash
-cd backend
-cp .env.example .env
-npm install
-npm run dev    # Development server on localhost:3001
-```
-
-### Setup Database
-```bash
-mysql -u root -p < database/dump.sql
-# Or use MySQL Workbench GUI
-```
 
 ---
 
