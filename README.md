@@ -15,8 +15,7 @@
 - [Architecture](#architecture)
 - [Technology Stack](#technology-stack)
 - [Key Features](#key-features)
-- [Deployment Guide](#deployment-guide)
-- [Challenges & Solutions](#challenges--solutions)
+- [Deployment Guide](documentation/deployment-guide.md)
 - [Lessons Learned](#lessons-learned)
 - [Future Improvements](#future-improvements)
 - [Local Development](#local-development)
@@ -240,7 +239,7 @@ mysql -u root -p < database/dump.sql
 
 **Author:**  
 **Samuel Ehizokhai** | DevOps/Cloud Engineer  
-📧 Email: ehizokhaisamuel@gmail.com 
+📧 Email: ehizokhaisamuel@gmail.com
 🔗 LinkedIn: [linkedin.com/in/samuel-ehizokhai](https://www.linkedin.com/in/samuel-ehizokhai)
 
 ---
