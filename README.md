@@ -1,185 +1,621 @@
+# AWS Three-Tier Book Review Application 🚀
 
-This project demonstrates the design, deployment, troubleshooting, and successful implementation of a production-style Three-Tier Web Application Architecture on AWS. The application consists of a Next.js frontend, Node.js/Express backend, and MySQL database deployed across multiple layers using AWS networking and load balancing services.
+[![AWS](https://img.shields.io/badge/AWS-FF9900?style=flat-square&logo=amazon-aws)](https://aws.amazon.com)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js)](https://nodejs.org)
+[![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js)](https://nextjs.org)
+[![MySQL](https://img.shields.io/badge/MySQL-005C87?style=flat-square&logo=mysql)](https://www.mysql.com)
+[![Nginx](https://img.shields.io/badge/Nginx-009639?style=flat-square&logo=nginx)](https://nginx.org)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
 
-The project was built to gain hands-on experience with AWS infrastructure, Linux administration, networking, load balancing, reverse proxy configuration, and application deployment.
+> A production-grade three-tier web application deployed on AWS demonstrating enterprise-level architecture, networking, and DevOps practices.
 
-##Project Objectives
-• Build a secure and scalable three-tier architecture on AWS.
-• Deploy frontend, backend, and database on separate EC2 instances.
-• Implement External and Internal Application Load Balancers.
-• Configure Nginx as a reverse proxy.
-• Apply networking and security best practices.
-• Troubleshoot real-world deployment issues.
+## 📋 Table of Contents
 
-##Architecture Overview
+- [Project Overview](#project-overview)
+- [Architecture](#architecture)
+- [Technology Stack](#technology-stack)
+- [Key Features](#key-features)
+- [Deployment Guide](#deployment-guide)
+- [Challenges & Solutions](#challenges--solutions)
+- [Lessons Learned](#lessons-learned)
+- [Future Improvements](#future-improvements)
+- [Security](#security)
+- [Author](#author)
 
-Internet
-   ↓
-External Application Load Balancer
-   ↓
-Frontend EC2 Instance (Next.js + Nginx)
-   ↓
-Internal Application Load Balancer
-   ↓
-Backend EC2 Instance (Node.js + Express)
-   ↓
-Database EC2 Instance (MySQL)
+---
 
-AWS Services Used
+## 📖 Project Overview
 
-• VPC
-• Public and Private Subnets
-• Internet Gateway
-• NAT Gateway
-• Route Tables
-• Security Groups
-• EC2 Instances
-• Application Load Balancers (External & Internal)
-• Target Groups
-• Amazon Linux 2023
+This project demonstrates the **design, deployment, and troubleshooting** of a production-style three-tier web application architecture on AWS. The application is a book review platform where users can browse books, read reviews, and leave their own feedback.
 
-Network Design
+**Built to gain hands-on experience with:**
+- AWS infrastructure and networking
+- Linux administration and server management
+- Load balancing and reverse proxy configuration
+- Real-world deployment troubleshooting
+- Security best practices and network isolation
+- Full-stack application deployment
 
-Public Layer:
-• External Load Balancer
-• Internet Gateway
-• NAT Gateway
+---
 
-Private Layer:
-• Frontend Server
-• Backend Server
-• Database Server
+## 🏗️ Architecture
 
-Traffic Flow:
-Users → External ALB → Frontend → Internal ALB → Backend → Database
+### System Design
 
-Frontend Configuration (Next.js)
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Public Internet                          │
+└────────────────────┬────────────────────────────────────────────┘
+                     │
+         ┌───────────▼──────────────┐
+         │   External ALB (Port 80) │
+         │   (Internet-Facing)      │
+         └───────────┬──────────────┘
+                     │
+       ┌─────────────▼──────────────┐
+       │  Frontend EC2 (Public)     │
+       │  • Next.js (Port 3000)     │
+       │  • Nginx Reverse Proxy     │
+       └─────────────┬──────────────┘
+                     │
+         ┌───────────▼──────────────┐
+         │   Internal ALB           │
+         │   (Private Only)         │
+         └───────────┬──────────────┘
+                     │
+       ┌─────────────▼──────────────┐
+       │  Backend EC2 (Private)     │
+       │  • Node.js/Express         │
+       │  • Port 3001               │
+       └─────────────┬──────────────┘
+                     │
+       ┌─────────────▼──────────────┐
+       │  RDS MySQL (Private)       │
+       │  • Port 3306               │
+       │  • Zero Internet Access    │
+       └────────────────────────────┘
+```
 
-Frontend responsibilities:
-• Render user interface
-• Handle user requests
-• Communicate with backend APIs
+### Network Layers
 
-Nginx Configuration:
-• Listens on Port 80
-• Reverse proxies requests to localhost:3000
-• Forwards API requests to Internal Load Balancer
+| Layer | Components | Purpose |
+|-------|-----------|---------|
+| **Public Tier** | External ALB, NAT Gateway, IGW | Handle internet traffic, manage outbound connectivity |
+| **Application Tier** | Frontend EC2 + Nginx | Serve UI, route requests, reverse proxy |
+| **Backend Tier** | Backend EC2 (Node.js) | Business logic, API processing |
+| **Data Tier** | MySQL Database | Data persistence, no internet access |
 
-Example:
-location / {
-    proxy_pass http://localhost:3000;
+### Traffic Flow
+
+```
+User Browser
+    ↓
+External ALB (0.0.0.0:80)
+    ↓
+Frontend EC2 (Nginx - Port 80)
+    ├─→ / (static assets)         → localhost:3000 (Next.js)
+    └─→ /api/* (API requests)     → Internal ALB → Backend
+    ↓
+Internal ALB (Private)
+    ↓
+Backend EC2 (Node.js - Port 3001)
+    ↓
+MySQL Database (Port 3306)
+```
+
+---
+
+## 💡 Technology Stack
+
+### Infrastructure (AWS)
+- **VPC** - Custom virtual network with public & private subnets
+- **EC2 Instances** - Application servers (Amazon Linux 2023)
+- **Application Load Balancers** - External (internet-facing) & Internal (private)
+- **Target Groups** - Route traffic to backend services
+- **Security Groups** - Firewall rules for network isolation
+- **Internet Gateway** - Public subnet internet access
+- **NAT Gateway** - Private subnet outbound connectivity
+- **Route Tables** - Network routing rules
+
+### Frontend
+- **Next.js 14** - React framework, SSR/SSG
+- **Nginx** - Reverse proxy, static asset serving
+- **Axios** - HTTP client for API calls
+
+### Backend
+- **Node.js 18** - JavaScript runtime
+- **Express.js** - Web framework
+- **Sequelize** - ORM for database operations
+- **PM2** - Process manager for background service
+
+### Database
+- **MySQL 8.0** - Relational database
+- **Private Subnet Deployment** - No public internet access
+
+---
+
+## ✨ Key Features
+
+✅ **Production-Grade Architecture**
+- Three-tier separation of concerns
+- Load balancing for high availability
+- Private database with zero internet exposure
+
+✅ **Security-First Design**
+- VPC isolation and security groups
+- Internal communication via private ALB
+- Principle of least privilege networking
+
+✅ **Reverse Proxy Configuration**
+- Nginx handles static files and API routing
+- Reduces backend exposure
+- Single entry point for all traffic
+
+✅ **Real-World Troubleshooting**
+- Documented 5+ production issues and resolutions
+- Practical debugging techniques
+- Health check configuration
+
+✅ **Scalability Ready**
+- Load balancer targets multiple instances
+- Auto Scaling group ready architecture
+- Horizontal scaling capability
+
+---
+
+## 🚀 Deployment Guide
+
+### Prerequisites
+- AWS Account with permissions to create VPC, EC2, ALB resources
+- SSH client (Windows: PuTTY, Linux/Mac: native SSH)
+- Basic knowledge of networking and Linux
+
+### Step-by-Step Deployment
+
+#### 1. Create VPC & Networking
+```bash
+# VPC CIDR: 10.0.0.0/16
+# Public Subnets: 10.0.1.0/24, 10.0.2.0/24 (different AZs)
+# Private Subnets: 10.0.10.0/24, 10.0.20.0/24 (different AZs)
+
+# Create Internet Gateway and attach to VPC
+# Create NAT Gateway in public subnet for private subnet egress
+```
+
+#### 2. Configure Security Groups
+
+**External ALB Security Group:**
+```
+Inbound: HTTP (80) from 0.0.0.0/0
+Inbound: HTTPS (443) from 0.0.0.0/0 [future]
+```
+
+**Frontend EC2 Security Group:**
+```
+Inbound: Port 80 from External ALB SG
+Inbound: Port 443 from External ALB SG [future]
+```
+
+**Internal ALB Security Group:**
+```
+Inbound: Port 80 from Frontend EC2 SG
+```
+
+**Backend EC2 Security Group:**
+```
+Inbound: Port 3001 from Internal ALB SG
+Inbound: Port 22 from Admin IP [SSH access]
+```
+
+**RDS/Database Security Group:**
+```
+Inbound: Port 3306 (MySQL) from Backend EC2 SG only
+```
+
+#### 3. Launch EC2 Instances
+```bash
+# Frontend EC2 (t2.micro / t3.micro)
+# - Amazon Linux 2023
+# - Public IP enabled
+# - Attach Frontend Security Group
+
+# Backend EC2 (t2.micro / t3.micro)
+# - Amazon Linux 2023
+# - Private IP only
+# - Attach Backend Security Group
+
+# Database (manual MySQL or RDS)
+# - Private subnet only
+# - Attach RDS Security Group
+```
+
+#### 4. Configure Frontend EC2
+```bash
+# 1. Install Node.js & npm
+sudo yum update -y
+curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
+sudo yum install -y nodejs
+
+# 2. Install Nginx
+sudo yum install -y nginx
+
+# 3. Clone & setup Next.js app
+cd /home/ec2-user
+git clone <your-repo>
+cd frontend
+npm install
+npm run build
+
+# 4. Create .env file
+cat > .env << EOF
+NEXT_PUBLIC_API_URL=/api
+PORT=3000
+NODE_ENV=production
+EOF
+
+# 5. Start with PM2
+npm install -g pm2
+pm2 start npm --name "frontend" -- start
+pm2 startup
+pm2 save
+```
+
+#### 5. Configure Nginx Reverse Proxy
+```bash
+sudo nano /etc/nginx/sites-available/bookapp
+```
+
+**Nginx Configuration:**
+```nginx
+server {
+    listen 80;
+    server_name _;
+
+    # Static assets & frontend
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Backend API routing
+    location /api/ {
+        proxy_pass http://internal-alb-xxxx.ap-south-1.elb.amazonaws.com;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
 }
+```
 
-location /api/ {
-    proxy_pass http://internal-alb-dns-name/;
-}
+```bash
+# Enable & start Nginx
+sudo ln -s /etc/nginx/sites-available/bookapp /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl start nginx
+sudo systemctl enable nginx
+```
 
-Backend Configuration (Node.js & Express)
+#### 6. Configure Backend EC2
+```bash
+# 1. Install Node.js
+sudo yum update -y
+curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
+sudo yum install -y nodejs
 
-Backend responsibilities:
-• Process API requests
-• Handle business logic
-• Communicate with MySQL database
+# 2. Clone & setup backend
+cd /home/ec2-user
+git clone <your-repo>
+cd backend
+npm install
 
-Runs on:
-• Port 3001
+# 3. Create .env file
+cat > .env << EOF
+DB_HOST=your-rds-endpoint.ap-south-1.rds.amazonaws.com
+DB_NAME=Epicreads
+DB_USER=epicuser
+DB_PASS=YourStrongPassword123!
+DB_DIALECT=mysql
+DB_PORT=3306
+PORT=3001
+NODE_ENV=production
+JWT_SECRET=YourSecureJWTSecret!
+ALLOWED_ORIGINS=http://external-alb-xxxx.ap-south-1.elb.amazonaws.com,http://localhost:3000
+EOF
 
-Backend environment variables:
-• Database Host
-• Database Name
-• Database User
-• Database Password
-• Application Configuration
+# 4. Initialize database
+mysql -h your-rds-endpoint -u epicuser -p Epicreads < database/dump.sql
 
-Database Configuration (MySQL)
+# 5. Start with PM2
+npm install -g pm2
+pm2 start server.js --name "backend"
+pm2 startup
+pm2 save
+```
 
-Database responsibilities:
-• Store application data
-• Handle user records
-• Store reviews and application content
+#### 7. Configure Load Balancers
 
-Security:
-• Private subnet deployment
-• Access restricted through Security Groups
-• Backend-only access
+**External ALB:**
+- Create in public subnets
+- Target Group → Frontend EC2 (Port 80)
+- Health Check: `/` (HTTP)
 
-Role of Internal Load Balancer
+**Internal ALB:**
+- Create in private subnets
+- Target Group → Backend EC2 (Port 3001)
+- Health Check: `/api/health` (HTTP)
 
-The Internal Load Balancer is never accessed directly by end users.
+---
 
-Its purpose is to:
-• Route frontend API requests to backend servers.
-• Improve scalability.
-• Support multiple backend instances.
-• Enable backend failover.
+## 🔧 Challenges & Solutions
 
-Flow:
-Frontend → Internal ALB → Backend
+### Challenge 1: Backend Target Group Unhealthy
+**Error:** External ALB unable to reach backend  
+**Root Cause:** Incorrect health check path and port mismatch
 
-Deployment Steps
+**Resolution:**
+```bash
+# Backend listening on port 3001
+netstat -tlnp | grep node
 
-1. Create VPC
-2. Create Public Subnets
-3. Create Private Subnets
-4. Configure Internet Gateway
-5. Configure NAT Gateway
-6. Configure Route Tables
-7. Create Security Groups
-8. Launch Database EC2
-9. Launch Backend EC2
-10. Launch Frontend EC2
-11. Configure Internal ALB
-12. Configure External ALB
-13. Install Nginx
-14. Configure Reverse Proxy
-15. Deploy Application
-16. Validate Connectivity
+# Updated health check path to /api/health
+# Created health endpoint in Node.js:
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'OK' });
+});
+```
 
-Challenges Encountered and Resolutions
+### Challenge 2: 504 Gateway Timeout
+**Error:** User requests timeout when calling API  
+**Root Cause:** Frontend calling backend via external ALB instead of internal ALB
 
-Challenge 1: Backend Target Group Unhealthy
-Resolution:
-• Corrected Health Check Path
-• Verified backend service was listening on Port 3001
+**Resolution:**
+```bash
+# Updated Nginx to route /api to internal ALB
+# Removed trailing slash from proxy_pass directive
+# Changed from: proxy_pass http://internal-alb.com/;
+# Changed to:  proxy_pass http://internal-alb.com;
+```
 
-Challenge 2: Bad Gateway Error
-Resolution:
-• Installed Nginx
-• Fixed proxy_pass configuration
+### Challenge 3: API Endpoint Doubling (`/api/api/books`)
+**Error:** API calls hitting `/api/api/` instead of `/api/`  
+**Root Cause:** Frontend `.env` had incorrect base URL
 
-Challenge 3: 504 Gateway Timeout
-Resolution:
-• Fixed frontend-to-backend communication
-• Updated Nginx routing
+**Resolution:**
+```env
+# Changed from:
+NEXT_PUBLIC_API_URL=http://external-alb.../book
 
-Challenge 4: API Endpoint Issue (/api/api/books)
-Resolution:
-• Corrected frontend environment variable configuration
+# Changed to:
+NEXT_PUBLIC_API_URL=/api
+```
 
-Challenge 5: Database Connectivity Issues
-Resolution:
-• Updated MySQL permissions
-• Validated Security Group rules
+### Challenge 4: CORS Errors
+**Error:** Browser blocking API responses  
+**Root Cause:** Backend CORS allowed origins misconfigured
 
-Lessons Learned
+**Resolution:**
+```javascript
+// Backend CORS configuration
+const cors = require('cors');
+const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
 
-• Three-Tier Architecture Design
-• AWS Networking Fundamentals
-• Internal vs External Load Balancers
-• Nginx Reverse Proxy Configuration
-• Linux Server Administration
-• Application Troubleshooting
-• Security Group Management
-• Health Check Configuration
-• Production Deployment Concepts
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed'));
+    }
+  },
+  credentials: true
+}));
+```
 
-Future Improvements
+### Challenge 5: Database Connection Refused
+**Error:** Backend unable to connect to MySQL  
+**Root Cause:** Security group rules blocking access
 
-• Infrastructure as Code using Terraform
-• Docker Containerization
-• CI/CD with GitHub Actions
-• Kubernetes Deployment
-• SSL/TLS using AWS Certificate Manager
-• Auto Scaling Groups
-Amazon RDS (Multi-AZ)
-• CloudWatch Monitoring
+**Resolution:**
+```bash
+# Updated RDS security group to allow:
+# Inbound: MySQL (3306) from Backend EC2 SG
+
+# Tested connection:
+mysql -h your-rds.ap-south-1.rds.amazonaws.com -u epicuser -p
+```
+
+---
+
+## 📚 Lessons Learned
+
+### AWS & Infrastructure
+- VPC segmentation and subnet design principles
+- Difference between internet-facing and internal load balancers
+- Security group rule precedence and implications
+- NAT Gateway for private subnet internet access
+- Health checks and target group configuration
+
+### Networking & Proxying
+- Nginx reverse proxy fundamentals
+- Trailing slash behavior in `proxy_pass` directives
+- Request/response header manipulation
+- Load balancer path-based routing rules
+- CORS configuration and troubleshooting
+
+### DevOps & Operations
+- Linux server administration (Amazon Linux 2023)
+- PM2 process management and auto-restart
+- Application logging and debugging
+- Environment variable management
+- Server health checks and monitoring
+
+### Application Development
+- Frontend-backend separation of concerns
+- API endpoint design and RESTful principles
+- Authentication and token management
+- Database connection pooling
+- Error handling and logging best practices
+
+### Troubleshooting Methodology
+- Systematic error diagnosis from browser console
+- Network traffic inspection using browser DevTools
+- Log file analysis (`pm2 logs`, `/var/log/nginx/`)
+- Health check validation
+- Incremental testing and isolation
+
+---
+
+## 🔮 Future Improvements
+
+- [ ] **Auto Scaling Groups** - Dynamically scale frontend and backend tiers
+- [ ] **Amazon RDS** - Replace EC2 MySQL with managed RDS (multi-AZ)
+- [ ] **SSL/HTTPS** - AWS Certificate Manager for encrypted traffic
+- [ ] **CloudWatch** - Centralized monitoring and alerting
+- [ ] **VPC Peering** - Connect to other VPCs if needed
+- [ ] **Route 53** - DNS management and failover
+- [ ] **WAF** - Web Application Firewall for DDoS protection
+- [ ] **S3 & CloudFront** - Static asset delivery with CDN
+- [ ] **Terraform/CloudFormation** - Infrastructure as Code
+- [ ] **CI/CD Pipeline** - Automated deployment (GitHub Actions / CodePipeline)
+
+---
+
+## 🔐 Security
+
+### By Design
+✅ **Database Isolation**
+- Zero internet access (private subnet only)
+- Access restricted to backend EC2 via security group rules
+- No SSH access to database server
+
+✅ **Backend Isolation**
+- Only reachable via internal ALB (not directly from internet)
+- Private subnet deployment
+- Security group restricts to ALB traffic only
+
+✅ **Frontend Gateway**
+- Single entry point via external ALB
+- Nginx reverse proxy (no direct backend exposure)
+- Static assets served efficiently
+
+✅ **Network Segmentation**
+- VPC isolation from other infrastructure
+- Public/private subnet separation
+- NAT Gateway for private subnet egress control
+
+### Best Practices Implemented
+- Principle of least privilege (security groups)
+- Defense in depth (multiple security layers)
+- No credentials in code or config files
+- Environment-based configuration management
+- Regular health checks for availability
+
+---
+
+## 📁 Repository Structure
+
+```
+aws-three-tier-book-review-app/
+│
+├── README.md                    # This file
+├── LICENSE                      # MIT License
+│
+├── frontend/                    # Next.js application
+│   ├── package.json
+│   ├── .env.example
+│   ├── public/
+│   ├── pages/                   # Next.js pages
+│   ├── components/              # React components
+│   ├── src/
+│   │   └── api.js              # Axios API client
+│   └── next.config.js
+│
+├── backend/                     # Node.js/Express API
+│   ├── package.json
+│   ├── .env.example
+│   ├── server.js               # Entry point
+│   ├── routes/                 # API endpoints
+│   ├── controllers/            # Business logic
+│   ├── models/                 # Database models
+│   ├── middleware/             # Auth, logging, etc
+│   └── database/
+│       └── dump.sql            # Initial schema
+│
+├── architecture/               # Diagrams & documentation
+│   ├── three-tier-diagram.png
+│   ├── vpc-design.png
+│   └── network-flow.md
+│
+└── documentation/              # Additional guides
+    ├── deployment-guide.md
+    ├── troubleshooting-guide.md
+    └── security-checklist.md
+```
+
+---
+
+## 🛠️ Local Development
+
+### Prerequisites
+- Node.js 18+
+- MySQL 8.0+
+- Git
+
+### Setup Frontend
+```bash
+cd frontend
+cp .env.example .env
+npm install
+npm run dev    # Development server on localhost:3000
+```
+
+### Setup Backend
+```bash
+cd backend
+cp .env.example .env
+npm install
+npm run dev    # Development server on localhost:3001
+```
+
+### Setup Database
+```bash
+mysql -u root -p < database/dump.sql
+# Or use MySQL Workbench GUI
+```
+
+---
+
+## 📞 Support & Contact
+
+**Issues & Questions:**
+- Check the [Troubleshooting Guide](documentation/troubleshooting-guide.md)
+- Review [Security Checklist](documentation/security-checklist.md)
+- Open an issue on GitHub
+
+**Author:**  
+**Samuel Ehizokhai** | DevOps/Cloud Engineer  
+📧 Email: [your-email@example.com]  
+🔗 LinkedIn: [linkedin.com/in/samuel-ehizokhai](https://www.linkedin.com/in/samuel-ehizokhai)  
+💻 GitHub: [@username](https://github.com/username)  
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+
+**[⬆ Back to Top](#aws-three-tier-book-review-application-)**
+
+Built with ❤️ on AWS | DevOps & Cloud Engineering
+
+</div>
