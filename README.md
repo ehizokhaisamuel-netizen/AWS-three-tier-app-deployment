@@ -15,13 +15,12 @@
 - [Architecture](#architecture)
 - [Technology Stack](#technology-stack)
 - [Key Features](#key-features)
+- [Local Development](#local-development)
 - [Deployment Guide](documentation/deployment-guide.md)
 - [Lessons Learned](#lessons-learned)
 - [Future Improvements](#future-improvements)
-- [Local Development](#local-development)
 - [Support & Contact](#support--contact)
-- [Security](#security)
-
+  
 ---
 
 ## Project Overview
@@ -41,6 +40,8 @@ This project demonstrates the **design, deployment, and troubleshooting** of a p
 ## Architecture
 
 ### System Design
+
+[architecture](architecture/three-tier-diagram.png)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
