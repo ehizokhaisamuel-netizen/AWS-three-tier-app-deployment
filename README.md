@@ -41,41 +41,9 @@ This project demonstrates the **design, deployment, and troubleshooting** of a p
 
 ### System Design
 
-[architecture](architecture/three-tier-diagram.png)
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Public Internet                          │
-└────────────────────┬────────────────────────────────────────────┘
-                     │
-         ┌───────────▼──────────────┐
-         │   External ALB (Port 80) │
-         │   (Internet-Facing)      │
-         └───────────┬──────────────┘
-                     │
-       ┌─────────────▼──────────────┐
-       │  Frontend EC2 (Public)     │
-       │  • Next.js (Port 3000)     │
-       │  • Nginx Reverse Proxy     │
-       └─────────────┬──────────────┘
-                     │
-         ┌───────────▼──────────────┐
-         │   Internal ALB           │
-         │   (Private Only)         │
-         └───────────┬──────────────┘
-                     │
-       ┌─────────────▼──────────────┐
-       │  Backend EC2 (Private)     │
-       │  • Node.js/Express         │
-       │  • Port 3001               │
-       └─────────────┬──────────────┘
-                     │
-       ┌─────────────▼──────────────┐
-       │  RDS MySQL (Private)       │
-       │  • Port 3306               │
-       │  • Zero Internet Access    │
-       └────────────────────────────┘
-```
+<img width="2554" height="1520" alt="three-tier-diagram" src="https://github.com/user-attachments/assets/27c4a0e8-b7f3-4996-8345-a3aab9ccb2e1" />
+
 
 ### Network Layers
 
