@@ -1,140 +1,185 @@
-# Book Review App
 
-## Overview
+This project demonstrates the design, deployment, troubleshooting, and successful implementation of a production-style Three-Tier Web Application Architecture on AWS. The application consists of a Next.js frontend, Node.js/Express backend, and MySQL database deployed across multiple layers using AWS networking and load balancing services.
 
-**Book Review App** is a modern, full-stack **three-tier web application** that allows users to browse books, read reviews, and submit their own. It demonstrates clean separation of concerns between frontend and backend, and is ideal for hands-on DevOps and cloud deployment practices.
+The project was built to gain hands-on experience with AWS infrastructure, Linux administration, networking, load balancing, reverse proxy configuration, and application deployment.
 
-- **Unauthenticated users** can view book details and existing reviews.
-- **Authenticated users** can register, log in, and submit reviews.
+##Project Objectives
+• Build a secure and scalable three-tier architecture on AWS.
+• Deploy frontend, backend, and database on separate EC2 instances.
+• Implement External and Internal Application Load Balancers.
+• Configure Nginx as a reverse proxy.
+• Apply networking and security best practices.
+• Troubleshoot real-world deployment issues.
 
-This project is part of the **[DevOps Zero to Hero: Docker, K8s, Cloud, CI/CD & 4 Projects](https://www.udemy.com/user/pravin-mishra-30/)** Udemy course and designed to help students practice DevOps tools and cloud infrastructure end-to-end.
+##Architecture Overview
 
----
+Internet
+   ↓
+External Application Load Balancer
+   ↓
+Frontend EC2 Instance (Next.js + Nginx)
+   ↓
+Internal Application Load Balancer
+   ↓
+Backend EC2 Instance (Node.js + Express)
+   ↓
+Database EC2 Instance (MySQL)
 
-## Architecture
+AWS Services Used
 
-- **Frontend**: Built using **Next.js**, providing server-side rendering and dynamic routing.
-- **Backend**: Powered by **Node.js** and **Express.js**, handling authentication, book data, and reviews.
-- **Database**: Uses **MySQL** with Sequelize ORM.
-  
-This three-tier architecture can be independently deployed, making it ideal for containerization, cloud hosting, and CI/CD implementation.
+• VPC
+• Public and Private Subnets
+• Internet Gateway
+• NAT Gateway
+• Route Tables
+• Security Groups
+• EC2 Instances
+• Application Load Balancers (External & Internal)
+• Target Groups
+• Amazon Linux 2023
 
-![Two-tiered-Web-application-architecture](https://github.com/user-attachments/assets/0be7ab58-91d0-4cde-9272-1c74ca783b4c)
+Network Design
 
+Public Layer:
+• External Load Balancer
+• Internet Gateway
+• NAT Gateway
 
----
+Private Layer:
+• Frontend Server
+• Backend Server
+• Database Server
 
-## Features
+Traffic Flow:
+Users → External ALB → Frontend → Internal ALB → Backend → Database
 
-### 🔐 User Authentication
-- User registration and login
-- Email and password-based login
-- Secure authentication using JWT tokens
+Frontend Configuration (Next.js)
 
-### 📚 Book Management
-- View all books
-- Fetch detailed info for each book
-- (Future enhancement: Admins can add/edit books)
+Frontend responsibilities:
+• Render user interface
+• Handle user requests
+• Communicate with backend APIs
 
-### 📝 Review System
-- View reviews for each book
-- Authenticated users can post reviews
-- Each review includes rating, username, and timestamp
+Nginx Configuration:
+• Listens on Port 80
+• Reverse proxies requests to localhost:3000
+• Forwards API requests to Internal Load Balancer
 
-### 🔄 State Management & API Integration
-- Frontend dynamically interacts with backend APIs
-- React Context manages global authentication state
+Example:
+location / {
+    proxy_pass http://localhost:3000;
+}
 
----
+location /api/ {
+    proxy_pass http://internal-alb-dns-name/;
+}
 
-## Technology Stack
+Backend Configuration (Node.js & Express)
 
-### Frontend
-- [Next.js](https://nextjs.org/) – React framework for SSR and routing  
-- Tailwind CSS – Utility-first CSS framework  
-- Axios – HTTP client for API calls  
-- React Context API – For managing global auth state  
+Backend responsibilities:
+• Process API requests
+• Handle business logic
+• Communicate with MySQL database
 
-### Backend
-- Node.js & Express.js – REST API development  
-- MySQL & Sequelize – Relational DB and ORM  
-- JWT – Token-based authentication  
-- bcrypt.js – Password hashing  
-- CORS – Cross-origin request handling  
+Runs on:
+• Port 3001
 
----
+Backend environment variables:
+• Database Host
+• Database Name
+• Database User
+• Database Password
+• Application Configuration
 
-## Application Structure
+Database Configuration (MySQL)
 
-```
-/book-review-app
- ├── /frontend   # Next.js frontend
- ├── /backend    # Node.js & Express backend
- └── README.md   # Project overview
-```
+Database responsibilities:
+• Store application data
+• Handle user records
+• Store reviews and application content
 
----
+Security:
+• Private subnet deployment
+• Access restricted through Security Groups
+• Backend-only access
 
-## Frontend Directory Layout
+Role of Internal Load Balancer
 
-```
-/frontend
- ├── /src
- │   ├── /app
- │   │   ├── page.js          # Home page (list of books)
- │   │   ├── /book/[id]       # Dynamic route for book details
- │   │   ├── /login           # Login page
- │   │   ├── /register        # Register page
- │   ├── /components          # Reusable UI components (Navbar, etc.)
- │   ├── /context             # React Context for auth state
- │   ├── /services            # Axios API functions
- │   ├── /styles              # Tailwind global styles
- ├── next.config.js           # Next.js config
- ├── package.json             # Dependencies and scripts
- └── README.md                # Frontend-specific docs
-```
+The Internal Load Balancer is never accessed directly by end users.
 
----
+Its purpose is to:
+• Route frontend API requests to backend servers.
+• Improve scalability.
+• Support multiple backend instances.
+• Enable backend failover.
 
-## Backend Directory Layout
+Flow:
+Frontend → Internal ALB → Backend
 
-```
-/backend
- ├── /src
- │   ├── /config              # Database config and connection
- │   ├── /models              # Sequelize models (User, Book, Review)
- │   ├── /routes              # Express route handlers
- │   ├── /controllers         # API business logic
- │   ├── /middleware          # JWT auth middleware
- │   └── server.js            # Entry point of the backend server
- ├── package.json             # Dependencies and scripts
- └── README.md                # Backend-specific docs
-```
+Deployment Steps
 
----
+1. Create VPC
+2. Create Public Subnets
+3. Create Private Subnets
+4. Configure Internet Gateway
+5. Configure NAT Gateway
+6. Configure Route Tables
+7. Create Security Groups
+8. Launch Database EC2
+9. Launch Backend EC2
+10. Launch Frontend EC2
+11. Configure Internal ALB
+12. Configure External ALB
+13. Install Nginx
+14. Configure Reverse Proxy
+15. Deploy Application
+16. Validate Connectivity
 
-## Setup Instructions
+Challenges Encountered and Resolutions
 
-Setup steps for both frontend and backend are provided in their respective folders:
+Challenge 1: Backend Target Group Unhealthy
+Resolution:
+• Corrected Health Check Path
+• Verified backend service was listening on Port 3001
 
-- [`/frontend/README.md`](./frontend/README.md)
-- [`/backend/README.md`](./backend/README.md)
+Challenge 2: Bad Gateway Error
+Resolution:
+• Installed Nginx
+• Fixed proxy_pass configuration
 
-Follow the instructions to install dependencies, configure environment variables, and start the application locally.
+Challenge 3: 504 Gateway Timeout
+Resolution:
+• Fixed frontend-to-backend communication
+• Updated Nginx routing
 
----
+Challenge 4: API Endpoint Issue (/api/api/books)
+Resolution:
+• Corrected frontend environment variable configuration
 
-## About This Project
+Challenge 5: Database Connectivity Issues
+Resolution:
+• Updated MySQL permissions
+• Validated Security Group rules
 
-This project is designed exclusively for the **Udemy course: [DevOps Zero to Hero: Docker, K8s, Cloud, CI/CD & 4 Projects]([https://www.udemy.com](https://www.udemy.com/user/pravin-mishra-30/))**.
+Lessons Learned
 
-Students will gain hands-on experience in:
-- Git, Docker, Kubernetes
-- Terraform, Ansible
-- CI/CD Pipelines
-- AWS & Azure Cloud
-- Full-stack project deployment from scratch
+• Three-Tier Architecture Design
+• AWS Networking Fundamentals
+• Internal vs External Load Balancers
+• Nginx Reverse Proxy Configuration
+• Linux Server Administration
+• Application Troubleshooting
+• Security Group Management
+• Health Check Configuration
+• Production Deployment Concepts
 
-This Book Review App serves as one of the **4 real-world DevOps projects** taught in the course.
+Future Improvements
 
-#### Testing CICD Pipeline
+• Infrastructure as Code using Terraform
+• Docker Containerization
+• CI/CD with GitHub Actions
+• Kubernetes Deployment
+• SSL/TLS using AWS Certificate Manager
+• Auto Scaling Groups
+Amazon RDS (Multi-AZ)
+• CloudWatch Monitoring
