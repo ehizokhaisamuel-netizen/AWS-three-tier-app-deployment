@@ -1,4 +1,4 @@
-# AWS Three-Tier Book Review Application 🚀
+# AWS Three-Tier Web Application 🚀
 
 [![AWS](https://img.shields.io/badge/AWS-FF9900?style=flat-square&logo=amazon-aws)](https://aws.amazon.com)
 [![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js)](https://nodejs.org)
